@@ -1,0 +1,74 @@
+[
+  {
+    "id": "KB_001",
+    "topic": "Deadlock Overview & Definition",
+    "subtopic": "Definition",
+    "title": "What is a Deadlock in Operating Systems?",
+    "content": "A deadlock is a situation in an operating system where a set of concurrent processes are permanently blocked because each process is holding resources and waiting to acquire other resources that are held by some other process in the same set. Formally, a set of processes {P0, P1, ..., Pn-1} is in a deadlocked state if every process in the set is waiting for an event that can be caused only by another process in the set.",
+    "keywords": ["deadlock", "blocked", "resources", "processes", "waiting", "event", "permanent block"]
+  },
+  {
+    "id": "KB_002",
+    "topic": "Necessary Conditions",
+    "subtopic": "Four Coffman Conditions",
+    "title": "The Four Necessary Conditions for Deadlock",
+    "content": "A deadlock situation can arise if and only if the following four Coffman conditions hold simultaneously in a system:\n1. Mutual Exclusion: At least one resource must be held in a non-shareable mode (only one process can use it at a time).\n2. Hold and Wait: A process must be currently holding at least one resource and simultaneously waiting to acquire additional resources that are currently being held by other processes.\n3. No Preemption: Resources cannot be forcibly taken away from a process; a resource can be released only voluntarily by the process holding it after completing its task.\n4. Circular Wait: A closed chain of processes exists such that P0 is waiting for a resource held by P1, P1 is waiting for P2, ..., and Pn-1 is waiting for P0.",
+    "keywords": ["coffman conditions", "mutual exclusion", "hold and wait", "no preemption", "circular wait", "simultaneous"]
+  },
+  {
+    "id": "KB_003",
+    "topic": "Deadlock Handling Strategies",
+    "subtopic": "Prevention",
+    "title": "Deadlock Prevention Strategy",
+    "content": "Deadlock prevention provides a set of design methods for ensuring that at least one of the four necessary conditions cannot hold:\n- Invalidate Mutual Exclusion: Make resources shareable (e.g., read-only files). However, some resources like printers or tape drives are intrinsically non-shareable.\n- Invalidate Hold and Wait: Require a process to request and be allocated all its resources before execution begins, or allow resource requests only when the process currently holds none. Drawback: poor resource utilization and possible starvation.\n- Invalidate No Preemption: If a process holding resources requests another resource that cannot be immediately allocated, all its currently held resources are preempted and released. Drawback: applicable only to resources whose state can be easily saved and restored (e.g., CPU registers, memory).\n- Invalidate Circular Wait: Impose a total ordering on all resource types F: R -> N. Require that each process requests resources only in strictly increasing order of enumeration.",
+    "keywords": ["prevention", "invalidate", "circular wait ordering", "resource utilization", "starvation", "preemption"]
+  },
+  {
+    "id": "KB_004",
+    "topic": "Deadlock Handling Strategies",
+    "subtopic": "Avoidance",
+    "title": "Deadlock Avoidance & Safe State",
+    "content": "Deadlock avoidance requires dynamic runtime information about resource requests. The system requires advance information concerning the maximum number of resources of each type that a process will need during its lifecycle.\n- Safe State: A state is safe if the system can allocate resources to each process (up to its maximum claim) in some sequence and still avoid deadlock. A safe sequence <P1, P2, ..., Pn> guarantees that for each Pi, the resources that Pi can still request can be satisfied by currently available resources plus resources held by all Pj (where j < i).\n- Unsafe State: If no safe sequence exists, the system is in an unsafe state. An unsafe state is NOT necessarily a deadlock, but every deadlocked state is an unsafe state. Avoidance algorithms ensure the system NEVER enters an unsafe state.",
+    "keywords": ["avoidance", "safe state", "unsafe state", "safe sequence", "banker's algorithm", "runtime check"]
+  },
+  {
+    "id": "KB_005",
+    "topic": "Banker's Algorithm",
+    "subtopic": "Data Structures & Safety Algorithm",
+    "title": "Banker's Safety Algorithm Steps",
+    "content": "The Banker's Algorithm uses four key data structures for n processes and m resource types:\n- Available[m]: Available[j] is the number of instances of resource Rj available.\n- Max[n][m]: Max[i][j] defines the maximum demand of process Pi for Rj.\n- Allocation[n][m]: Allocation[i][j] is currently allocated instances of Rj to Pi.\n- Need[n][m]: Need[i][j] = Max[i][j] - Allocation[i][j].\n\nSafety Algorithm Steps:\n1. Let Work = Available (vector of length m) and Finish[i] = False for i = 0, 1, ..., n-1.\n2. Find an index i such that: Finish[i] == False and Need[i] <= Work. If no such i exists, go to Step 4.\n3. Work = Work + Allocation[i]; Finish[i] = True; Append Pi to Safe Sequence; go to Step 2.\n4. If Finish[i] == True for all i, then the system is in a SAFE STATE; otherwise, it is UNSAFE.",
+    "keywords": ["banker's algorithm", "safety algorithm", "work", "finish", "need matrix", "max matrix", "allocation matrix", "available vector"]
+  },
+  {
+    "id": "KB_006",
+    "topic": "Banker's Algorithm",
+    "subtopic": "Resource-Request Algorithm",
+    "title": "Banker's Resource-Request Algorithm",
+    "content": "When a process Pi makes a request Request[i] for resources:\n1. If Request[i] <= Need[i], go to Step 2. Otherwise, raise an error condition (process exceeded its maximum claim).\n2. If Request[i] <= Available, go to Step 3. Otherwise, Pi must wait since resources are not available.\n3. Pretend to allocate requested resources to Pi by modifying state:\n   Available = Available - Request[i]\n   Allocation[i] = Allocation[i] + Request[i]\n   Need[i] = Need[i] - Request[i]\n4. Run the Safety Algorithm on this speculative state.\n   - If the resulting state is SAFE, the transaction is completed and Pi is allocated the resources.\n   - If the state is UNSAFE, Pi must wait, and the previous resource-allocation state is restored.",
+    "keywords": ["resource-request algorithm", "request vector", "speculative state", "grant or wait", "rollback"]
+  },
+  {
+    "id": "KB_007",
+    "topic": "Resource Allocation Graph",
+    "subtopic": "RAG Graph Analysis",
+    "title": "Resource Allocation Graphs (RAG) and Deadlock Detection",
+    "content": "A Resource Allocation Graph is a directed graph G = (V, E) where:\n- V is divided into two sets: Processes P = {P1, P2, ..., Pn} (circles) and Resources R = {R1, R2, ..., Rm} (rectangles, containing dots for instances).\n- Request Edge: Directed edge Pi -> Rj signifies that process Pi has requested an instance of Rj and is currently waiting.\n- Assignment Edge: Directed edge Rj -> Pi signifies that an instance of Rj has been allocated to Pi.\n\nDeadlock Detection Theorems in RAG:\n- If the graph contains NO cycles, the system is definitely NOT in a deadlock.\n- If the graph contains a cycle:\n  a) If each resource type has exactly ONE instance, a cycle is BOTH a necessary and sufficient condition for deadlock (Cycle <=> Deadlock).\n  b) If resource types have MULTIPLE instances, a cycle is necessary but NOT sufficient for deadlock. A cycle indicates a possibility of deadlock, but processes outside the cycle might release instances to break it.",
+    "keywords": ["rag", "resource allocation graph", "request edge", "assignment edge", "single instance", "multiple instances", "cycle detection"]
+  },
+  {
+    "id": "KB_008",
+    "topic": "Deadlock Detection & Recovery",
+    "subtopic": "Detection and Recovery",
+    "title": "Deadlock Detection Algorithm and Recovery Techniques",
+    "content": "If a system does not employ prevention or avoidance, it must employ detection and recovery:\n- Detection: For single instance resources, maintain a Wait-For Graph (collapsing resource nodes). An edge Pi -> Pj exists if Pi waits for Pj. Find cycles in the Wait-For graph using DFS (O(N^2) or Tarjan's). For multiple instances, run an algorithm similar to Banker's safety check using Allocation and Request matrices.\n- Recovery Methods:\n  1. Process Termination: Abort all deadlocked processes, or abort one process at a time until the deadlock cycle is broken (based on process priority, execution time, resources held).\n  2. Resource Preemption: Successively preempt resources from processes and give them to others until deadlock is eliminated. Key issues: selecting a victim, rollback to a safe checkpoint, and preventing starvation (using timestamp or aging).",
+    "keywords": ["detection", "recovery", "wait-for graph", "process termination", "resource preemption", "victim selection", "rollback", "starvation"]
+  },
+  {
+    "id": "KB_009",
+    "topic": "Deadlock Ignorance",
+    "subtopic": "Ostrich Algorithm",
+    "title": "Deadlock Ignorance (The Ostrich Algorithm)",
+    "content": "The Ostrich Algorithm is an approach where the operating system simply ignores the deadlock problem and pretends that deadlocks never occur in the system. It assumes that deadlocks occur very rarely, and the cost of prevention, avoidance, or dynamic detection is prohibitively high relative to the inconvenience of manual reboots. Most modern general-purpose operating systems, including standard Linux, Windows, and macOS, use the Ostrich algorithm for general process deadlocks, leaving concurrency deadlock handling to application developers.",
+    "keywords": ["ostrich algorithm", "deadlock ignorance", "windows", "linux", "performance tradeoff"]
+  }
+]

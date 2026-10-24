@@ -1,0 +1,71 @@
+[
+  {
+    "case_id": "CASE_SAFE_1",
+    "title": "Standard Silberschatz 5-Process 3-Resource Benchmark",
+    "processes": ["P0", "P1", "P2", "P3", "P4"],
+    "resources": ["A", "B", "C"],
+    "total_resources": [10, 5, 7],
+    "allocation": [
+      [0, 1, 0],
+      [2, 0, 0],
+      [3, 0, 2],
+      [2, 1, 1],
+      [0, 0, 2]
+    ],
+    "max": [
+      [7, 5, 3],
+      [3, 2, 2],
+      [9, 0, 2],
+      [2, 2, 2],
+      [4, 3, 3]
+    ],
+    "available": [3, 3, 2],
+    "expected_safe": true,
+    "expected_sequence": ["P1", "P3", "P4", "P0", "P2"]
+  },
+  {
+    "case_id": "CASE_UNSAFE_1",
+    "title": "Deadlock Prone / Unsafe State",
+    "processes": ["P0", "P1", "P2"],
+    "resources": ["R1", "R2"],
+    "total_resources": [3, 2],
+    "allocation": [
+      [1, 0],
+      [1, 1],
+      [1, 0]
+    ],
+    "max": [
+      [2, 1],
+      [2, 2],
+      [2, 1]
+    ],
+    "available": [0, 1],
+    "expected_safe": false,
+    "expected_sequence": []
+  },
+  {
+    "case_id": "CASE_REQUEST_1",
+    "title": "Resource Request Test for P1 Request=(1,0,2)",
+    "processes": ["P0", "P1", "P2", "P3", "P4"],
+    "resources": ["A", "B", "C"],
+    "total_resources": [10, 5, 7],
+    "allocation": [
+      [0, 1, 0],
+      [2, 0, 0],
+      [3, 0, 2],
+      [2, 1, 1],
+      [0, 0, 2]
+    ],
+    "max": [
+      [7, 5, 3],
+      [3, 2, 2],
+      [9, 0, 2],
+      [2, 2, 2],
+      [4, 3, 3]
+    ],
+    "available": [3, 3, 2],
+    "request_process": 1,
+    "request_vector": [1, 0, 2],
+    "can_be_granted": true
+  }
+]
